@@ -1,6 +1,7 @@
 const express = require('express')
 const app = express()
 const bodyParser = require('body-parser')
+const morgan = require('morgan')
 
 let persons = [
   {
@@ -27,20 +28,16 @@ let persons = [
 
 app.use(bodyParser.json())
 
+morgan.token('data', function getData (req, res) { return JSON.stringify(req.body) })
+
+app.use(morgan(':method :url :data :status :res[content-length] - :response-time ms'))
+
 app.get('/', (req, res) => {
 	res.send('<h1>Terve</h1>')
 })
 
 app.get('/api/persons', (req, res) => {
 	res.json(persons)
-})
-
-app.get('/info1', (req, res) => {
-	const amount = persons.length
-	const date = new Date()
-	res.write(`puhelinluettelossa ${amount} henkilön tiedot\n`)
-	res.write(`${new Date()}`)
-	res.end()
 })
 
 app.get('/info', (req, res) => {
@@ -56,6 +53,32 @@ app.get('/api/persons/:id', (req, res) => {
 	} else {
 		res.status(404).end()
 	}
+})
+
+app.post('/api/persons', (req, res) => {
+	const body = req.body
+
+	if (body.number === undefined) {
+		return res.status(400).json({error: "number missing"})
+	}
+
+	if (body.name === undefined) {
+		return res.status(400).json({error: "name missing"})
+	}
+
+	if (persons.filter(person => person.name === body.name).length > 0) {
+		return res.status(400).json({error: "name already exists"})
+	}
+
+	const person = {
+		name: body.name,
+		number: body.number,
+		id: Math.floor((Math.random()*10000) +1)
+	}
+
+	persons = persons.concat(person)
+
+	res.json(person)
 })
 
 app.delete('/api/persons/:id', (req, res) => {
