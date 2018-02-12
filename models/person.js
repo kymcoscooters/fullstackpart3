@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 
 require('dotenv').config()
   
-const url = process.env.MONGODB_URI
+const url = "mongodb://kymcoscooters:tietokanta@ds133558.mlab.com:33558/kymcodb"
 
 mongoose.connect(url)
 
