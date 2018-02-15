@@ -80,6 +80,7 @@ app.post('/api/persons', (req, res) => {
 	person
 		.save()
 		.then(savedPerson => {
+			personamount += 1
 			res.json(formatPerson(savedPerson))
 		})
 		.catch(error => {
