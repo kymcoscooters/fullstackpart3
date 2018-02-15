@@ -5,28 +5,7 @@ const morgan = require('morgan')
 const cors = require('cors')
 const Person = require('./models/person')
 
-let persons = [
-	{
-    	"name": "Arto Hellas",
-    	"number": "123",
-    	"id": 1
-	},
-	{
-		"name": "Martti Tienari",
-		"number": "040-123456",
-		"id": 2
-	},
-    {
-    	"name": "Arto Järvinen",
-    	"number": "040-123456",
-    	"id": 3
-  	},
-  	{
-    	"name": "Lea Kutvonen",
-    	"number": "040-123456",
-		"id": 4
-  	}
-]
+let personlist = []
 
 app.use(express.static('build'))
 
@@ -54,6 +33,7 @@ app.get('/api/persons', (req, res) => {
 	Person
 		.find({})
 		.then(persons => {
+			personlist = persons
 			res.json(persons.map(formatPerson))
 		})
 		.catch(error => {
@@ -62,7 +42,7 @@ app.get('/api/persons', (req, res) => {
 })
 
 app.get('/info', (req, res) => {
-	res.send(`puhelinluettelossa ${persons.length} henkilön tiedot</br>${new Date()}`)
+	res.send(`puhelinluettelossa ${personlist.length} henkilön tiedot</br>${new Date()}`)
 })
 
 app.get('/api/persons/:id', (req, res) => {
